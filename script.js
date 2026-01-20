@@ -1,4 +1,4 @@
-// ==================== GAME CONFIGURATION ====================
+// ==================== GAME CONFIGURATION! ====================
 const CONFIG = {
   GAME_DURATION: 180,
   MAX_ELIXIR: 10,
@@ -1647,4 +1647,5 @@ document.addEventListener('DOMContentLoaded', initGame);
 window.addEventListener('beforeunload', () => {
   clearArena(true);
   multiplayerManager.cleanup();
+
 });
