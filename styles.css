@@ -1450,11 +1450,11 @@ input {
 }
 
 #result-text.victory {
-    fill: url(#victoryGrad);
+    fill:url (#victoryGrad);
 }
 
 #result-text.defeat {
-    fill: url(#defeatGrad);
+    color:#fff;
 }
 
 #result-text.draw {
