@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Clash - Horizontal Lane Battle</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Custom Popup Modal -->
+        <div id="custom-popup" class="popup-overlay hidden">
+            <div class="popup-container">
+                <div class="popup-header">
+                    <span id="popup-icon" class="popup-icon"></span>
+                    <h3 id="popup-title">Notification</h3>
+                </div>
+                <div class="popup-body">
+                    <p id="popup-message"></p>
+                </div>
+                <div class="popup-footer">
+                    <button id="popup-confirm-btn" class="popup-btn confirm">OK</button>
+                    <button id="popup-cancel-btn" class="popup-btn cancel hidden">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Menu -->
+        <div id="main-menu" class="screen active">
+            <div class="menu-background">
+                <svg class="bg-pattern" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="menuGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#0a0a2e"/>
+                            <stop offset="50%" style="stop-color:#1a1a4e"/>
+                            <stop offset="100%" style="stop-color:#0a0a2e"/>
+                        </linearGradient>
+                        <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#ffffff10" stroke-width="0.5"/>
+                        </pattern>
+                    </defs>
+                    <rect width="100" height="100" fill="url(#menuGrad)"/>
+                    <rect width="100" height="100" fill="url(#grid)"/>
+                </svg>
+                <!-- Animated particles -->
+                <div class="menu-particles">
+                    <svg class="particle-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <circle class="floating-particle" cx="10" cy="20" r="0.5" fill="#00f0ff"/>
+                        <circle class="floating-particle" cx="30" cy="60" r="0.3" fill="#ff00ff"/>
+                        <circle class="floating-particle" cx="50" cy="30" r="0.4" fill="#00f0ff"/>
+                        <circle class="floating-particle" cx="70" cy="70" r="0.5" fill="#ff00ff"/>
+                        <circle class="floating-particle" cx="90" cy="40" r="0.3" fill="#00f0ff"/>
+                        <circle class="floating-particle" cx="20" cy="80" r="0.4" fill="#ff00ff"/>
+                        <circle class="floating-particle" cx="60" cy="10" r="0.5" fill="#00f0ff"/>
+                        <circle class="floating-particle" cx="80" cy="90" r="0.3" fill="#ff00ff"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="menu-content">
+                <div class="logo-container">
+                    <svg viewBox="0 0 500 120" class="title-svg">
+                        <defs>
+                            <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#00f0ff"/>
+                                <stop offset="50%" style="stop-color:#ff00ff"/>
+                                <stop offset="100%" style="stop-color:#00f0ff"/>
+                            </linearGradient>
+                            <linearGradient id="subtitleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#ffffff80"/>
+                                <stop offset="100%" style="stop-color:#ffffff40"/>
+                            </linearGradient>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                            <filter id="strongGlow">
+                                <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <!-- Main title -->
+                        <text x="250" y="60" text-anchor="middle" fill="url(#titleGrad)" filter="url(#strongGlow)" class="title-text" font-size="56" font-weight="bold">CYBER CLASH</text>
+                        <!-- Subtitle -->
+                        <text x="250" y="95" text-anchor="middle" fill="url(#subtitleGrad)" font-size="18" letter-spacing="8">HORIZONTAL WARFARE</text>
+                        <!-- Decorative lines -->
+                        <line x1="50" y1="110" x2="200" y2="110" stroke="url(#titleGrad)" stroke-width="2" opacity="0.5"/>
+                        <line x1="300" y1="110" x2="450" y2="110" stroke="url(#titleGrad)" stroke-width="2" opacity="0.5"/>
+                    </svg>
+                </div>
+                
+                <div class="menu-buttons">
+                    <button class="menu-btn primary" id="vs-computer-btn">
+                        <svg class="btn-icon" viewBox="0 0 24 24">
+                            <rect x="2" y="3" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <line x1="8" y1="21" x2="16" y2="21" stroke="currentColor" stroke-width="2"/>
+                            <line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="12" cy="10" r="3" fill="currentColor"/>
+                        </svg>
+                        <span>VS COMPUTER</span>
+                        <div class="btn-shine"></div>
+                    </button>
+                    
+                    <button class="menu-btn secondary" id="multiplayer-btn">
+                        <svg class="btn-icon" viewBox="0 0 24 24">
+                            <circle cx="9" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="17" cy="7" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <path d="M21 21v-2a3 3 0 0 0-3-3h-1" fill="none" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <span>MULTIPLAYER</span>
+                        <div class="btn-shine"></div>
+                    </button>
+                    
+                    <button class="menu-btn tertiary" id="deck-btn">
+                        <svg class="btn-icon" viewBox="0 0 24 24">
+                            <rect x="2" y="4" width="16" height="20" rx="2" fill="none" stroke="currentColor" stroke-width="2" transform="rotate(-5 10 14)"/>
+                            <rect x="6" y="2" width="16" height="20" rx="2" fill="none" stroke="currentColor" stroke-width="2" transform="rotate(5 14 12)"/>
+                        </svg>
+                        <span>BUILD DECK</span>
+                        <div class="btn-shine"></div>
+                    </button>
+                </div>
+                
+                <div class="menu-footer">
+                    <div class="stats-preview">
+                        <div class="stat-item">
+                            <svg viewBox="0 0 24 24" class="stat-icon">
+                                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor"/>
+                            </svg>
+                            <span id="menu-wins">0 Wins</span>
+                        </div>
+                        <div class="stat-item">
+                            <svg viewBox="0 0 24 24" class="stat-icon">
+                                <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+                                <path d="M12 6v6l4 2" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span id="menu-games">0 Games</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Multiplayer Lobby -->
+        <div id="multiplayer-lobby" class="screen">
+            <div class="screen-background">
+                <svg class="bg-pattern" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <rect width="100" height="100" fill="url(#menuGrad)"/>
+                    <rect width="100" height="100" fill="url(#grid)"/>
+                </svg>
+            </div>
+            <div class="lobby-content">
+                <div class="screen-header">
+                    <svg viewBox="0 0 300 50" class="section-title-svg">
+                        <text x="150" y="35" text-anchor="middle" fill="url(#titleGrad)" filter="url(#glow)" font-size="32" font-weight="bold">MULTIPLAYER</text>
+                    </svg>
+                </div>
+                
+                <div class="connection-panel">
+                    <div class="panel-section create-section">
+                        <h4>CREATE A ROOM</h4>
+                        <p class="section-desc">Host a game and share the code</p>
+                        <button class="menu-btn primary" id="create-room-btn">
+                            <svg class="btn-icon" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+                                <line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="2"/>
+                                <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span>CREATE ROOM</span>
+                        </button>
+                        <div id="room-code-display" class="room-code hidden">
+                            <span class="code-label">ROOM CODE</span>
+                            <span id="room-code" class="code-value"></span>
+                            <button id="copy-code-btn" class="copy-btn">
+                                <svg viewBox="0 0 24 24">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" fill="none" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="panel-divider">
+                        <span>OR</span>
+                    </div>
+                    
+                    <div class="panel-section join-section">
+                        <h4>JOIN A ROOM</h4>
+                        <p class="section-desc">Enter a room code to join</p>
+                        <div class="join-input-group">
+                            <input type="text" id="join-code-input" placeholder="XXXXXX" maxlength="6" autocomplete="off">
+                            <button class="menu-btn secondary" id="join-room-btn">
+                                <span>JOIN</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="connection-status" class="status-container">
+                    <div class="status-icon">
+                        <svg viewBox="0 0 24 24" class="waiting-icon">
+                            <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="30 70" class="spinner"/>
+                        </svg>
+                    </div>
+                    <span class="status-text">Ready to connect</span>
+                </div>
+                
+                <button class="menu-btn back" id="lobby-back-btn">
+                    <svg class="btn-icon" viewBox="0 0 24 24">
+                        <path d="M19 12H5M12 19l-7-7 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>BACK</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Deck Builder -->
+        <div id="deck-builder" class="screen">
+            <div class="screen-background">
+                <svg class="bg-pattern" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <rect width="100" height="100" fill="url(#menuGrad)"/>
+                    <rect width="100" height="100" fill="url(#grid)"/>
+                </svg>
+            </div>
+            <div class="deck-content">
+                <div class="screen-header">
+                    <svg viewBox="0 0 300 50" class="section-title-svg">
+                        <text x="150" y="35" text-anchor="middle" fill="url(#titleGrad)" filter="url(#glow)" font-size="32" font-weight="bold">DECK BUILDER</text>
+                    </svg>
+                </div>
+                
+                <div class="deck-panels">
+                    <div class="current-deck-panel">
+                        <div class="panel-header">
+                            <h3>YOUR DECK</h3>
+                            <span class="deck-counter"><span id="deck-count">0</span>/5</span>
+                        </div>
+                        <div id="selected-cards" class="card-slots">
+                            <div class="card-slot empty" data-slot="0">
+                                <svg viewBox="0 0 24 24" class="slot-icon">
+                                    <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/>
+                                    <line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="2"/>
+                                    <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <div class="card-slot empty" data-slot="1">
+                                <svg viewBox="0 0 24 24" class="slot-icon">
+                                    <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/>
+                                    <line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="2"/>
+                                    <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <div class="card-slot empty" data-slot="2">
+                                <svg viewBox="0 0 24 24" class="slot-icon">
+                                    <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/>
+                                    <line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="2"/>
+                                    <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <div class="card-slot empty" data-slot="3">
+                                <svg viewBox="0 0 24 24" class="slot-icon">
+                                    <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/>
+                                    <line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="2"/>
+                                    <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <div class="card-slot empty" data-slot="4">
+                                <svg viewBox="0 0 24 24" class="slot-icon">
+                                    <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/>
+                                    <line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="2"/>
+                                    <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="deck-stats">
+                            <div class="stat">
+                                <span class="stat-label">Avg Cost:</span>
+                                <span id="avg-cost" class="stat-value">0</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Total HP:</span>
+                                <span id="total-hp" class="stat-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="available-cards-panel">
+                        <div class="panel-header">
+                            <h3>AVAILABLE UNITS</h3>
+                            <div class="filter-buttons">
+                                <button class="filter-btn active" data-filter="all">All</button>
+                                <button class="filter-btn" data-filter="melee">Melee</button>
+                                <button class="filter-btn" data-filter="ranged">Ranged</button>
+                            </div>
+                        </div>
+                        <div id="all-cards" class="card-grid"></div>
+                    </div>
+                </div>
+                
+                <div class="deck-actions">
+                    <button class="menu-btn back" id="deck-back-btn">
+                        <svg class="btn-icon" viewBox="0 0 24 24">
+                            <path d="M19 12H5M12 19l-7-7 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>BACK</span>
+                    </button>
+                    <button class="menu-btn primary" id="save-deck-btn">
+                        <svg class="btn-icon" viewBox="0 0 24 24">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <polyline points="17 21 17 13 7 13 7 21" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <polyline points="7 3 7 8 15 8" fill="none" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <span>SAVE DECK</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Arena -->
+        <div id="game-arena" class="screen">
+            <!-- Top HUD -->
+            <div class="game-hud-top">
+                <div class="player-panel left">
+                    <div class="player-avatar player-side">
+                        <svg viewBox="0 0 60 60">
+                            <defs>
+                                <linearGradient id="playerAvatarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#00f0ff"/>
+                                    <stop offset="100%" style="stop-color:#0066aa"/>
+                                </linearGradient>
+                            </defs>
+                            <circle cx="30" cy="30" r="28" fill="#0a1628" stroke="url(#playerAvatarGrad)" stroke-width="3"/>
+                            <text x="30" y="36" text-anchor="middle" fill="#00f0ff" font-size="14" font-weight="bold">YOU</text>
+                        </svg>
+                    </div>
+                    <div class="health-container">
+                        <div class="health-bar-wrapper">
+                            <div class="health-bar-bg"></div>
+                            <div id="player-tower-health" class="health-bar-fill player"></div>
+                            <span id="player-health-text" class="health-text">1000</span>
+                        </div>
+                        <svg class="tower-icon" viewBox="0 0 24 24">
+                            <path d="M3 21h18v-2H3v2zm0-4h18v-2H3v2zm0-4h18v-2H3v2zm0-4h18V7H3v2zm0-6v2h18V3H3z" fill="#00f0ff"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="game-timer-container">
+                    <svg viewBox="0 0 120 60" class="timer-svg">
+                        <defs>
+                            <linearGradient id="timerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#2a2a6e"/>
+                                <stop offset="100%" style="stop-color:#1a1a4e"/>
+                            </linearGradient>
+                        </defs>
+                        <rect x="5" y="5" width="110" height="50" rx="10" fill="url(#timerGrad)" stroke="#00f0ff" stroke-width="2"/>
+                        <text id="timer-text" x="60" y="40" text-anchor="middle" fill="#00f0ff" font-size="28" font-weight="bold">3:00</text>
+                    </svg>
+                </div>
+                
+                <div class="player-panel right">
+                    <div class="health-container">
+                        <svg class="tower-icon" viewBox="0 0 24 24">
+                            <path d="M3 21h18v-2H3v2zm0-4h18v-2H3v2zm0-4h18v-2H3v2zm0-4h18V7H3v2zm0-6v2h18V3H3z" fill="#ff0055"/>
+                        </svg>
+                        <div class="health-bar-wrapper">
+                            <div class="health-bar-bg"></div>
+                            <div id="enemy-tower-health" class="health-bar-fill enemy"></div>
+                            <span id="enemy-health-text" class="health-text">1000</span>
+                        </div>
+                    </div>
+                    <div class="player-avatar enemy-side">
+                        <svg viewBox="0 0 60 60">
+                            <defs>
+                                <linearGradient id="enemyAvatarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#ff0055"/>
+                                    <stop offset="100%" style="stop-color:#aa0033"/>
+                                </linearGradient>
+                            </defs>
+                            <circle cx="30" cy="30" r="28" fill="#280a14" stroke="url(#enemyAvatarGrad)" stroke-width="3"/>
+                            <text x="30" y="36" text-anchor="middle" fill="#ff0055" font-size="12" font-weight="bold">ENEMY</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Battle Field - Single Lane -->
+            <div id="battle-field">
+                <svg id="arena-svg" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                        <!-- Gradients -->
+                        <linearGradient id="arenaGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#0a1628"/>
+                            <stop offset="50%" style="stop-color:#1a2a48"/>
+                            <stop offset="100%" style="stop-color:#0a1628"/>
+                        </linearGradient>
+                        <linearGradient id="laneGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#1a2a48"/>
+                            <stop offset="50%" style="stop-color:#0d1a2d"/>
+                            <stop offset="100%" style="stop-color:#1a2a48"/>
+                        </linearGradient>
+                        <linearGradient id="playerTowerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#00f0ff"/>
+                            <stop offset="50%" style="stop-color:#0088cc"/>
+                            <stop offset="100%" style="stop-color:#004466"/>
+                        </linearGradient>
+                        <linearGradient id="enemyTowerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ff0055"/>
+                            <stop offset="50%" style="stop-color:#cc0044"/>
+                            <stop offset="100%" style="stop-color:#660022"/>
+                        </linearGradient>
+                        
+                        <!-- Glow Filters -->
+                        <filter id="blueGlow" x="-100%" y="-100%" width="300%" height="300%">
+                            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                        <filter id="redGlow" x="-100%" y="-100%" width="300%" height="300%">
+                            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                        <filter id="whiteGlow" x="-100%" y="-100%" width="300%" height="300%">
+                            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                        
+                        <!-- Projectile Gradient -->
+                        <radialGradient id="projectileGrad">
+                            <stop offset="0%" style="stop-color:#ffffff"/>
+                            <stop offset="100%" style="stop-color:#00f0ff"/>
+                        </radialGradient>
+                        <radialGradient id="enemyProjectileGrad">
+                            <stop offset="0%" style="stop-color:#ffffff"/>
+                            <stop offset="100%" style="stop-color:#ff0055"/>
+                        </radialGradient>
+                    </defs>
+
+                    <!-- Arena Background -->
+                    <rect width="1200" height="300" fill="url(#arenaGrad)"/>
+                    
+                    <!-- Grid Pattern -->
+                    <g class="arena-grid" opacity="0.3">
+                        <line x1="0" y1="75" x2="1200" y2="75" stroke="#ffffff20" stroke-width="1"/>
+                        <line x1="0" y1="150" x2="1200" y2="150" stroke="#ffffff20" stroke-width="1"/>
+                        <line x1="0" y1="225" x2="1200" y2="225" stroke="#ffffff20" stroke-width="1"/>
+                        <!-- Center line -->
+                        <line x1="600" y1="0" x2="600" y2="300" stroke="#ff000050" stroke-width="3" stroke-dasharray="15,10"/>
+                        <!-- Vertical grid -->
+                        <line x1="200" y1="0" x2="200" y2="300" stroke="#ffffff10" stroke-width="1"/>
+                        <line x1="400" y1="0" x2="400" y2="300" stroke="#ffffff10" stroke-width="1"/>
+                        <line x1="800" y1="0" x2="800" y2="300" stroke="#ffffff10" stroke-width="1"/>
+                        <line x1="1000" y1="0" x2="1000" y2="300" stroke="#ffffff10" stroke-width="1"/>
+                    </g>
+
+                    <!-- Single Lane -->
+                    <g class="lane">
+                        <rect x="100" y="100" width="1000" height="100" fill="url(#laneGrad)" rx="10" opacity="0.6"/>
+                        <rect x="100" y="100" width="1000" height="100" fill="none" stroke="#00f0ff20" stroke-width="2" rx="10"/>
+                        <!-- Lane direction arrows -->
+                        <g opacity="0.2">
+                            <polygon points="300,150 320,140 320,160" fill="#00f0ff"/>
+                            <polygon points="400,150 420,140 420,160" fill="#00f0ff"/>
+                            <polygon points="500,150 520,140 520,160" fill="#00f0ff"/>
+                            <polygon points="700,150 680,140 680,160" fill="#ff0055"/>
+                            <polygon points="800,150 780,140 780,160" fill="#ff0055"/>
+                            <polygon points="900,150 880,140 880,160" fill="#ff0055"/>
+                        </g>
+                    </g>
+
+                    <!-- Player Tower (Left) -->
+                    <g id="player-tower" class="tower" transform="translate(20, 50)">
+                        <!-- Base -->
+                        <rect x="0" y="20" width="70" height="180" fill="url(#playerTowerGrad)" rx="8" filter="url(#blueGlow)"/>
+                        <!-- Border -->
+                        <rect x="3" y="23" width="64" height="174" fill="none" stroke="#ffffff30" stroke-width="2" rx="6"/>
+                        <!-- Armor plates -->
+                        <rect x="8" y="35" width="54" height="12" fill="#00f0ff" opacity="0.4" rx="3"/>
+                        <rect x="8" y="55" width="54" height="12" fill="#00f0ff" opacity="0.3" rx="3"/>
+                        <rect x="8" y="75" width="54" height="12" fill="#00f0ff" opacity="0.4" rx="3"/>
+                        <!-- Core housing -->
+                        <rect x="15" y="100" width="40" height="60" fill="#001a33" rx="5"/>
+                        <rect x="18" y="103" width="34" height="54" fill="none" stroke="#00f0ff" stroke-width="2" rx="4"/>
+                        <!-- Core -->
+                        <circle cx="35" cy="130" r="18" fill="#003355" stroke="#00f0ff" stroke-width="3"/>
+                        <circle cx="35" cy="130" r="10" fill="#00f0ff" class="tower-core">
+                            <animate attributeName="opacity" values="1;0.5;1" dur="1.5s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="35" cy="130" r="5" fill="#ffffff"/>
+                        <!-- Main Cannon -->
+                        <g class="cannon main-cannon">
+                            <rect x="60" y="120" width="50" height="20" fill="#00aacc" rx="4"/>
+                            <rect x="65" y="125" width="45" height="10" fill="#00ddff" rx="2"/>
+                            <circle cx="110" cy="130" r="6" fill="#00f0ff" filter="url(#blueGlow)"/>
+                        </g>
+                        <!-- Top Cannon -->
+                        <g class="cannon top-cannon">
+                            <rect x="60" y="55" width="35" height="14" fill="#0088aa" rx="3"/>
+                            <rect x="63" y="58" width="32" height="8" fill="#00bbdd" rx="2"/>
+                        </g>
+                        <!-- Bottom Cannon -->
+                        <g class="cannon bottom-cannon">
+                            <rect x="60" y="165" width="35" height="14" fill="#0088aa" rx="3"/>
+                            <rect x="63" y="168" width="32" height="8" fill="#00bbdd" rx="2"/>
+                        </g>
+                        <!-- Shield effect -->
+                        <ellipse cx="35" cy="120" rx="45" ry="100" fill="none" stroke="#00f0ff" stroke-width="1" opacity="0.3" stroke-dasharray="5,5">
+                            <animate attributeName="stroke-dashoffset" from="0" to="20" dur="2s" repeatCount="indefinite"/>
+                        </ellipse>
+                    </g>
+
+                    <!-- Enemy Tower (Right) -->
+                    <g id="enemy-tower" class="tower" transform="translate(1110, 50)">
+                        <!-- Base -->
+                        <rect x="0" y="20" width="70" height="180" fill="url(#enemyTowerGrad)" rx="8" filter="url(#redGlow)"/>
+                        <!-- Border -->
+                        <rect x="3" y="23" width="64" height="174" fill="none" stroke="#ffffff30" stroke-width="2" rx="6"/>
+                        <!-- Armor plates -->
+                        <rect x="8" y="35" width="54" height="12" fill="#ff0055" opacity="0.4" rx="3"/>
+                        <rect x="8" y="55" width="54" height="12" fill="#ff0055" opacity="0.3" rx="3"/>
+                        <rect x="8" y="75" width="54" height="12" fill="#ff0055" opacity="0.4" rx="3"/>
+                        <!-- Core housing -->
+                        <rect x="15" y="100" width="40" height="60" fill="#330011" rx="5"/>
+                        <rect x="18" y="103" width="34" height="54" fill="none" stroke="#ff0055" stroke-width="2" rx="4"/>
+                        <!-- Core -->
+                        <circle cx="35" cy="130" r="18" fill="#550022" stroke="#ff0055" stroke-width="3"/>
+                        <circle cx="35" cy="130" r="10" fill="#ff0055" class="tower-core">
+                            <animate attributeName="opacity" values="1;0.5;1" dur="1.5s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle cx="35" cy="130" r="5" fill="#ffffff"/>
+                        <!-- Main Cannon -->
+                        <g class="cannon main-cannon">
+                            <rect x="-40" y="120" width="50" height="20" fill="#cc0044" rx="4"/>
+                            <rect x="-40" y="125" width="45" height="10" fill="#ff0066" rx="2"/>
+                            <circle cx="-40" cy="130" r="6" fill="#ff0055" filter="url(#redGlow)"/>
+                        </g>
+                        <!-- Top Cannon -->
+                        <g class="cannon top-cannon">
+                            <rect x="-25" y="55" width="35" height="14" fill="#aa0033" rx="3"/>
+                            <rect x="-25" y="58" width="32" height="8" fill="#dd0044" rx="2"/>
+                        </g>
+                        <!-- Bottom Cannon -->
+                        <g class="cannon bottom-cannon">
+                            <rect x="-25" y="165" width="35" height="14" fill="#aa0033" rx="3"/>
+                            <rect x="-25" y="168" width="32" height="8" fill="#dd0044" rx="2"/>
+                        </g>
+                        <!-- Shield effect -->
+                        <ellipse cx="35" cy="120" rx="45" ry="100" fill="none" stroke="#ff0055" stroke-width="1" opacity="0.3" stroke-dasharray="5,5">
+                            <animate attributeName="stroke-dashoffset" from="0" to="-20" dur="2s" repeatCount="indefinite"/>
+                        </ellipse>
+                    </g>
+
+                    <!-- Spawn Zones -->
+                    <g class="spawn-zones" opacity="0.3">
+                        <!-- Player spawn zone -->
+                        <rect x="100" y="100" width="150" height="100" fill="#00f0ff" opacity="0.1" rx="10"/>
+                        <text x="175" y="155" text-anchor="middle" fill="#00f0ff" font-size="12" opacity="0.5">DEPLOY</text>
+                        <!-- Enemy spawn zone -->
+                        <rect x="950" y="100" width="150" height="100" fill="#ff0055" opacity="0.1" rx="10"/>
+                    </g>
+
+                    <!-- Units Container -->
+                    <g id="units-container"></g>
+                    
+                    <!-- Projectiles Container -->
+                    <g id="projectiles-container"></g>
+                    
+                    <!-- Effects Container -->
+                    <g id="effects-container"></g>
+                </svg>
+                
+                <!-- Click overlay for deployment -->
+                <div id="deploy-overlay"></div>
+            </div>
+
+            <!-- Bottom HUD -->
+            <div class="game-hud-bottom">
+                <!-- Elixir Bar -->
+                <div class="elixir-section">
+                    <div class="elixir-container">
+                        <div class="elixir-icon">
+                            <svg viewBox="0 0 30 30">
+                                <defs>
+                                    <linearGradient id="elixirIconGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#ff00ff"/>
+                                        <stop offset="100%" style="stop-color:#aa00ff"/>
+                                    </linearGradient>
+                                </defs>
+                                <path d="M15 3 L20 12 L20 25 Q20 27 15 27 Q10 27 10 25 L10 12 Z" fill="url(#elixirIconGrad)" stroke="#ff00ff" stroke-width="1"/>
+                                <ellipse cx="15" cy="12" rx="5" ry="2" fill="#ff66ff" opacity="0.5"/>
+                            </svg>
+                        </div>
+                        <div class="elixir-bar-wrapper">
+                            <div class="elixir-bar-bg"></div>
+                            <div id="elixir-fill" class="elixir-bar-fill"></div>
+                            <div class="elixir-segments">
+                                <span></span><span></span><span></span><span></span><span></span>
+                                <span></span><span></span><span></span><span></span><span></span>
+                            </div>
+                        </div>
+                        <span id="elixir-text" class="elixir-text">5/10</span>
+                    </div>
+                </div>
+
+                <!-- Card Hand -->
+                <div id="card-hand">
+                    <div id="cards-in-hand" class="cards-row"></div>
+                </div>
+            </div>
+
+            <!-- Game Control Buttons -->
+            <div class="game-controls">
+                <button id="pause-btn" class="control-btn">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="6" y="4" width="4" height="16" fill="white" rx="1"/>
+                        <rect x="14" y="4" width="4" height="16" fill="white" rx="1"/>
+                    </svg>
+                </button>
+                <button id="menu-btn" class="control-btn">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="5" r="2" fill="white"/>
+                        <circle cx="12" cy="12" r="2" fill="white"/>
+                        <circle cx="12" cy="19" r="2" fill="white"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Pause Overlay -->
+            <div id="pause-overlay" class="game-overlay hidden">
+                <div class="overlay-content">
+                    <h2>PAUSED</h2>
+                    <button class="menu-btn primary" id="resume-btn">
+                        <svg class="btn-icon" viewBox="0 0 24 24">
+                            <polygon points="5,3 19,12 5,21" fill="currentColor"/>
+                        </svg>
+                        <span>RESUME</span>
+                    </button>
+                    <button class="menu-btn secondary" id="quit-btn">
+                        <svg class="btn-icon" viewBox="0 0 24 24">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <polyline points="16 17 21 12 16 7" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <span>QUIT</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="game-over" class="screen">
+            <div class="screen-background">
+                <svg class="bg-pattern" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <rect width="100" height="100" fill="url(#menuGrad)"/>
+                </svg>
+            </div>
+            <div class="game-over-content">
+                <div class="result-banner" id="result-banner">
+                    <svg viewBox="0 0 400 100" class="result-svg">
+                        <defs>
+                            <linearGradient id="victoryGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#00ff00"/>
+                                <stop offset="50%" style="stop-color:#00ffaa"/>
+                                <stop offset="100%" style="stop-color:#00ff00"/>
+                            </linearGradient>
+                            <linearGradient id="defeatGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#ff0055"/>
+                                <stop offset="50%" style="stop-color:#ff5588"/>
+                                <stop offset="100%" style="stop-color:#ff0055"/>
+                            </linearGradient>
+                            <filter id="resultGlow">
+                                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <text id="result-text" x="200" y="65" text-anchor="middle" font-size="56" font-weight="bold" filter="url(#resultGlow)">VICTORY!</text>
+                    </svg>
+                </div>
+                
+                <div class="stats-panel">
+                    <div class="stat-row">
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+                                <path d="M3 21v-2a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v2" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <span class="stat-label">Units Deployed</span>
+                        <span id="stat-units" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <span class="stat-label">Damage Dealt</span>
+                        <span id="stat-damage" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="3" y="11" width="18" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" fill="none" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <span class="stat-label">Tower HP Left</span>
+                        <span id="stat-tower-hp" class="stat-value">0</span>
+                    </div>
+                </div>
+                
+                <div class="game-over-buttons">
+                    <button class="menu-btn primary" id="play-again-btn">
+                        <svg class="btn-icon" viewBox="0 0 24 24">
+                            <path d="M23 4v6h-6M1 20v-6h6" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" fill="none" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <span>PLAY AGAIN</span>
+                    </button>
+                    <button class="menu-btn secondary" id="main-menu-btn">
+                        <svg class="btn-icon" viewBox="0 0 24 24">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="2"/>
+                            <polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <span>MAIN MENU</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
