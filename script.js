@@ -1,4 +1,4 @@
-// ==================== GAME CONFIGURATION! ====================
+// ==================== GAME CONFIGURATION ====================
 const CONFIG = {
   GAME_DURATION: 180,
   MAX_ELIXIR: 10,
@@ -663,6 +663,24 @@ class MultiplayerManager {
     };
     this.pollInterval = null;
   }
+  
+  saveRoomOffer() {
+  if (!gameState.roomCode || !gameState.peerConnection?.localDescription) return;
+  localStorage.setItem(`room_${gameState.roomCode}`, JSON.stringify({
+    offer: gameState.peerConnection.localDescription,
+    timestamp: Date.now()
+  }));
+}
+
+async waitForRoomOffer(roomCode, timeoutMs = 8000) {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    const raw = localStorage.getItem(`room_${roomCode}`);
+    if (raw) return raw;
+    await new Promise(r => setTimeout(r, 250));
+  }
+  return null;
+}
 
   generateRoomCode() {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -1479,10 +1497,17 @@ function endGame(result = null) {
   saveGameStats(result === 'victory');
 
   const rt = $('result-text');
-  if (rt) {
-    rt.textContent = `${result.toUpperCase()}!`;
-    rt.className = result;
-  }
+if (rt) {
+  rt.textContent = `${result.toUpperCase()}!`;
+
+  // SVG-safe class assignment
+  rt.setAttribute('class', result);
+
+  // Force a visible fill (prevents black text issue)
+  if (result === 'victory') rt.setAttribute('fill', 'url(#victoryGrad)');
+  else if (result === 'defeat') rt.setAttribute('fill', 'url(#defeatGrad)');
+  else rt.setAttribute('fill', '#ffaa00');
+}
 
   if ($('stat-units')) $('stat-units').textContent = gameState.unitsDeployed;
   if ($('stat-damage')) $('stat-damage').textContent = gameState.damageDealt;
@@ -1647,5 +1672,4 @@ document.addEventListener('DOMContentLoaded', initGame);
 window.addEventListener('beforeunload', () => {
   clearArena(true);
   multiplayerManager.cleanup();
-
 });
