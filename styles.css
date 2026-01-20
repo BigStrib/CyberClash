@@ -1,4 +1,4 @@
-/* ==================== RESET & BASE ==================== */
+/* ==================== RESET & BASE! ==================== */
 *, *::before, *::after {
     margin: 0;
     padding: 0;
@@ -2049,4 +2049,5 @@ input:focus-visible {
 
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 212, 255, 0.5);
+
 }
